@@ -1,0 +1,33 @@
+services:
+  backend:
+    container_name: backend
+    #build do container (usa a imagem gerada como imagem do container)
+    build:
+      #caminho do Dockerfile
+      context: .
+    image: backend
+    #bind das portas
+    ports:
+      - "8000:8000"
+    #define o diretório em que os comandos são executados e caso não exista, ele é criado
+    working_dir: /var/www/html
+    #bind do diretório host para o container
+    volumes:
+      - .:/var/www/html
+    #comando que será executado ao iniciar o container
+    command: php -S 0.0.0.0:8000
+    #dependência do container
+    depends_on:
+      - db
+  db:
+    container_name: db
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      #diretório para persistência do banco de dados
+      - ./db/mysql:/var/lib/mysql
+      #diretório para sql que sera executado na inicialização do container
+      - ./db/sql:/docker-entrypoint-initdb.d
